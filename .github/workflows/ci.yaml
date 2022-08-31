@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - '**' # All branches
+    tags-ignore:
+      - '**' # Don't run for any tags
+
+jobs:
+
+  # This is where the normal CI stuff lives
+  # lint:
+  #   runs-on: ubuntu-latest
+  # test:
+  #   runs-on: ubuntu-latest
+
+  tag-release:
+    #needs: [lint, test]
+    if: github.ref_name == 'main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          # See: https://medium.com/prompt/trigger-another-github-workflow-without-using-a-personal-access-token-f594c21373ef
+          ssh-key: "${{ secrets.COMMIT_KEY }}"
+
+      - name: Set GitHub Actions as commit author
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      # TODO: update this fork...
+      - uses: Spatial-Quotient/pr-semver-bump@master
+        name: Bump and Tag Version
+        with:
+          mode: bump
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          major-label: version-bump-major
+          minor-label: version-bump-minor
+          patch-label: version-bump-patch
+          with-v: true
+          use-ssh: true
+          require-release: false

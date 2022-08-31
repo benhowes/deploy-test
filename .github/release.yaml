@@ -1,0 +1,13 @@
+# .github/release.yml
+
+changelog:
+  categories:
+    - title: Breaking Changes 🚨
+      labels:
+        - version-bump-major
+    - title: New Features 🎉
+      labels:
+        - version-bump-minor
+    - title: Patches 🔧
+      labels:
+        - version-bump-patch

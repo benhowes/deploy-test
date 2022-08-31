@@ -1,0 +1,67 @@
+name: Build
+
+on:
+  push:
+    tags: v**
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: "benhowes/test-img"
+
+jobs:
+
+  create-release:
+    # Creates a github release to show the changes
+    runs-on: ubuntu-latest
+    steps:
+    - name: Create release 🔔
+        uses: ncipollo/release-action@v1
+        with:
+          generateReleaseNotes: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+  build:
+    # Build a docker image for the current version
+    needs: [create-release]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v2
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Docker meta
+      id: meta
+      uses: docker/metadata-action@v4
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+        tags: type=semver,pattern={{version}}
+
+    - name: Build and push Docker image
+      uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+      with:
+        context: .
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+
+
+  deploy-staging:
+    needs: [build]
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - name: Deploy to aptible staging
+        uses: aptible/aptible-deploy-action@v1
+        with:
+          username: ${{ secrets.APTIBLE_ROBOT_USERNAME }}
+          password: ${{ secrets.APTIBLE_ROBOOT_PASSWORD }}
+          app: ${{ secrets.APTIBLE_APP }}
+          environment: ${{ secrets.APTIBLE_ENVIRONMENT }}
+          docker_img: ${{ steps.meta.outputs.tags }}
+          private_registry_username: ${{ secrets.DOCKERHUB_USERNAME }}
+          private_registry_password: ${{ secrets.DOCKERHUB_TOKEN }}
