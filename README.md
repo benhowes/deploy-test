@@ -46,7 +46,7 @@ At this point, a new release has been requested and the actions will:
 
 Currently this pushes the docker image to the github container registry as a bot user, then uses the [aptible deploy action](https://github.com/aptible/aptible-deploy-action) to trigger a release in aptible.
 
-> **warning**
+> **Warning**
 > The container registry should be switched to one which supports immutable docker tags so the built image is immune to being overwritten.
 
 
