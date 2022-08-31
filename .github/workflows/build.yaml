@@ -42,7 +42,7 @@ jobs:
       with:
         images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
         tags: type=semver,pattern={{version}}
-        flavour: |
+        flavor: |
           latest=false
 
     - name: Build and push Docker image
@@ -59,19 +59,13 @@ jobs:
     runs-on: ubuntu-latest
     environment: staging
     steps:
-      - name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v4
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          tags: type=semver,pattern={{version}}
-      - name: Deploy to aptible staging
-        uses: aptible/aptible-deploy-action@v1
-        with:
-          username: ${{ secrets.APTIBLE_ROBOT_USERNAME }}
-          password: ${{ secrets.APTIBLE_ROBOOT_PASSWORD }}
-          app: ${{ secrets.APTIBLE_APP }}
-          environment: ${{ secrets.APTIBLE_ENVIRONMENT }}
-          docker_img: ${{ needs.build.outputs.container-tag }}
-          private_registry_username: ${{ secrets.DOCKERHUB_USERNAME }}
-          private_registry_password: ${{ secrets.DOCKERHUB_TOKEN }}
+    - name: Deploy to aptible staging
+      uses: aptible/aptible-deploy-action@v1
+      with:
+        username: ${{ secrets.APTIBLE_ROBOT_USERNAME }}
+        password: ${{ secrets.APTIBLE_ROBOOT_PASSWORD }}
+        app: ${{ secrets.APTIBLE_APP }}
+        environment: ${{ secrets.APTIBLE_ENVIRONMENT }}
+        docker_img: ${{ needs.build.outputs.container-tag }}
+        private_registry_username: ${{ secrets.DOCKERHUB_USERNAME }}
+        private_registry_password: ${{ secrets.DOCKERHUB_TOKEN }}
