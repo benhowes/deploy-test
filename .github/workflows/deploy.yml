@@ -48,9 +48,9 @@ jobs:
       - uses: actions/checkout@v2
       - uses: aptible/aptible-deploy-action@v1
         with:
-          username: ${{secrets.APTIBLE_ROBOT_USERNAME}}
-          password: ${{secrets.APTIBLE_ROBOOT_PASSWORD}}
-          app: ${{ secrets.APTIBLE_APP} }}
+          username: ${{ secrets.APTIBLE_ROBOT_USERNAME }}
+          password: ${{ secrets.APTIBLE_ROBOOT_PASSWORD }}
+          app: ${{ secrets.APTIBLE_APP }}
           environment: ${{ secrets.APTIBLE_ENIRONMENT }}
           docker_img: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ inputs.version }}
           private_registry_username: ${{ secrets.DOCKERHUB_USERNAME }}
