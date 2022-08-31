@@ -16,13 +16,12 @@ on:
         required: true
 
 jobs:
-
   deploy:
-    needs: [build]
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     steps:
-      - uses: aptible/aptible-deploy-action@v1
+      - name: "Deploy specified version"
+        uses: aptible/aptible-deploy-action@v1
         with:
           username: ${{ secrets.APTIBLE_ROBOT_USERNAME }}
           password: ${{ secrets.APTIBLE_ROBOOT_PASSWORD }}
