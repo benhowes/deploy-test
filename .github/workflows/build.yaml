@@ -24,6 +24,8 @@ jobs:
     # Build a docker image for the current version
     needs: [create-release]
     runs-on: ubuntu-latest
+    outputs:
+      container-tag: ${{ steps.meta.outputs.tags }}
     steps:
     - uses: actions/checkout@master
 
@@ -40,6 +42,8 @@ jobs:
       with:
         images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
         tags: type=semver,pattern={{version}}
+        flavour: |
+          latest=false
 
     - name: Build and push Docker image
       uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
@@ -55,6 +59,12 @@ jobs:
     runs-on: ubuntu-latest
     environment: staging
     steps:
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: type=semver,pattern={{version}}
       - name: Deploy to aptible staging
         uses: aptible/aptible-deploy-action@v1
         with:
@@ -62,6 +72,6 @@ jobs:
           password: ${{ secrets.APTIBLE_ROBOOT_PASSWORD }}
           app: ${{ secrets.APTIBLE_APP }}
           environment: ${{ secrets.APTIBLE_ENVIRONMENT }}
-          docker_img: ${{ steps.meta.outputs.tags }}
+          docker_img: ${{ needs.build.outputs.container-tag }}
           private_registry_username: ${{ secrets.DOCKERHUB_USERNAME }}
           private_registry_password: ${{ secrets.DOCKERHUB_TOKEN }}
