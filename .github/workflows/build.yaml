@@ -15,10 +15,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Create release 🔔
-        uses: ncipollo/release-action@v1
-        with:
-          generateReleaseNotes: true
-          token: ${{ secrets.GITHUB_TOKEN }}
+      uses: ncipollo/release-action@v1
+      with:
+        generateReleaseNotes: true
+        token: ${{ secrets.GITHUB_TOKEN }}
 
   build:
     # Build a docker image for the current version
