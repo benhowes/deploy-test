@@ -1,5 +1,9 @@
 # Github Aptible Devops test
 
+This repo contains a very simple deployable image (borrowed from [the aptible demo](https://github.com/aptible/aptible-deploy-action-demo)) and a set of github actions to show a potentially useful way to setup a complete development workflow around this.
+
+Demo environments:
+
 - staging: https://app-44579.on-aptible.com
 - production: https://app-44578.on-aptible.com
 
