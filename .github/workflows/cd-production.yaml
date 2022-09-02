@@ -45,7 +45,7 @@ jobs:
           name: ${{ env.IMAGE_NAME }}
           # old tag is the commit hash - set in the cd-staging container build
           old_tag: ${{ github.sha }}
-          new_tag: ${{ steps.meta.outputs.tags }}
+          new_tag: ${{ steps.meta.outputs.version }}
           username: github
           password: ${{ secrets.GITHUB_TOKEN }}
 
