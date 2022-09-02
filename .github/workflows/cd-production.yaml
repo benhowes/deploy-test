@@ -41,7 +41,7 @@ jobs:
         uses: benhowes/retag-docker-image-action@v1
         with:
           registry: ${{ env.REGISTRY }}
-          name: ${{ env.IMAGE_NAME }}
+          name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           # old tag is the commit hash - set in the cd-staging container build
           old_tag: ${{ github.sha }}
           new_tag: ${{ steps.meta.outputs.version }}
