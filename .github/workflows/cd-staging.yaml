@@ -52,7 +52,7 @@ jobs:
         push: true
         tags: |-
           ${{ steps.meta.outputs.tags }}
-          ${{ github.sha }}
+          ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
         labels: ${{ steps.meta.outputs.labels }}
 
 
