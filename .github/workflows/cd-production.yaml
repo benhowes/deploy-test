@@ -15,7 +15,7 @@ jobs:
     # Build a docker image for the current version
     runs-on: ubuntu-latest
     outputs:
-      container-tag: ${{ steps.meta-release.outputs.tags }}
+      container-tag: ${{ steps.meta.outputs.tags }}
     steps:
       - uses: actions/checkout@master
 
@@ -26,23 +26,14 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Docker meta - internal version tag
-        id: meta-internal
-        uses: docker/metadata-action@v4
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          tags: type=semver,pattern={{version}}
-          flavor: |
-            latest=false
-
       - name: Docker meta - new tag
-        id: meta-release
+        id: meta
         uses: docker/metadata-action@v4
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           # The following pattern matches the calver section of the tag, e.g.
           # a tag `release.2022.09.1` -> `2022.09.1`
-          tags: type=match,pattern=release.(\d.\d.\d),group=1
+          tags: type=match,pattern=release.(\d+.\d+.\d+),group=1
           flavor: |
             latest=false
 
@@ -52,8 +43,9 @@ jobs:
         with:
           registry: ${{ env.REGISTRY }}
           name: ${{ env.IMAGE_NAME }}
-          old_tag: ${{ steps.meta-internal.outputs.tags }}
-          new_tag: ${{ steps.meta-release.outputs.tags }}
+          # old tag is the commit hash - set in the cd-staging container build
+          old_tag: ${{ github.sha }}
+          new_tag: ${{ steps.meta.outputs.tags }}
           username: github
           password: ${{ secrets.GITHUB_TOKEN }}
 
