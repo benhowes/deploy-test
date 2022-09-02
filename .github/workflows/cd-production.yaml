@@ -26,17 +26,6 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Docker meta - new tag
-        id: meta
-        uses: docker/metadata-action@v4
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          # The following pattern matches the calver section of the tag, e.g.
-          # a tag `release.2022.09.1` -> `2022.09.1`
-          tags: type=match,pattern=release.(\d+.\d+.\d+),group=1
-          flavor: |
-            latest=false
-
       - name: Tag release version
         uses: benhowes/retag-docker-image-action@v1
         with:
@@ -44,7 +33,8 @@ jobs:
           name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           # old tag is the commit hash - set in the cd-staging container build
           tag: ${{ github.sha }}
-          new_tag: ${{ steps.meta.outputs.version }}
+          # The ref_name is the full tag name
+          new_tag: ${{ github.ref_name }}
           username: github
           password: ${{ secrets.GITHUB_TOKEN }}
 
