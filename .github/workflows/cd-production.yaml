@@ -13,7 +13,6 @@ jobs:
 
   tag-release-image:
     # Build a docker image for the current version
-    needs: [create-release]
     runs-on: ubuntu-latest
     outputs:
       container-tag: ${{ steps.meta-release.outputs.tags }}
@@ -59,7 +58,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
   deploy-production:
-    needs: [build]
+    needs: [tag-release-image]
     runs-on: ubuntu-latest
     environment: production
     steps:
@@ -70,6 +69,6 @@ jobs:
           password: ${{ secrets.APTIBLE_ROBOOT_PASSWORD }}
           app: ${{ secrets.APTIBLE_APP }}
           environment: ${{ secrets.APTIBLE_ENVIRONMENT }}
-          docker_img: ${{ needs.build.outputs.container-tag }}
+          docker_img: ${{ needs.tag-release-image.outputs.container-tag }}
           private_registry_username: ${{ secrets.DOCKERHUB_USERNAME }}
           private_registry_password: ${{ secrets.DOCKERHUB_TOKEN }}
