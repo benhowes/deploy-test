@@ -38,8 +38,7 @@ jobs:
             latest=false
 
       - name: Tag release version
-        # TODO: create an internal version of this
-        uses: koraykoska/retag-docker-image@0.2.4
+        uses: benhowes/retag-docker-image-action@v1
         with:
           registry: ${{ env.REGISTRY }}
           name: ${{ env.IMAGE_NAME }}
